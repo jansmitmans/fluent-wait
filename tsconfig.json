@@ -1,0 +1,17 @@
+{  "compilerOptions": {
+        "target": "ESNext",
+        // "allowSyntheticDefaultImports": true,
+        "module": "CommonJS", // or ES2015, ES2020
+        "lib": ["ESNext"],
+        "declaration": true,
+        "declarationMap": true,
+        "noImplicitAny": false,
+        "strictNullChecks": true,
+        "sourceMap": true,
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "esModuleInterop": true,
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules"],
+}

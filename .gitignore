@@ -1,0 +1,13 @@
+# OSX
+#
+.DS_Store
+# IntelliJ
+#
+.idea
+yarn-error.log
+# node.js
+#
+node_modules/
+# custom
+/dist
+/coverage
