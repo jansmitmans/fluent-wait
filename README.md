@@ -2,6 +2,12 @@
 
 This utility provides a fluent interface for creating a wait condition that periodically checks if a certain condition is met. It is useful when dealing with asynchronous operations where you need to wait for a certain condition to be fulfilled before proceeding.
 
+
+Use 
+- in async processes: wait until a batch job finishes until proceeding processing
+- in e2e UI tests: wait until all expected locators are found
+- ... many more cases.
+
 ## Usage
 
 First, import the `FluentWait` class and the `PollingConfiguration` type from the module:
