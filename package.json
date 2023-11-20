@@ -2,9 +2,9 @@
   "name": "fluent-wait",
   "version": "1.0.0",
   "description": "This library features a fluent wait functionality which you can use to execute an action periodically until a certain condition is fulfilled. Useful for handling synchronization issues that may arise, e.g. in test automation. ",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist/ && prettier --write src/ && npm run lint:fix && tsc",
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --ext .ts . --fix",
     "test": "jest --coverage --verbose"
