@@ -39,7 +39,7 @@ This will return a promise that resolves with the result of the function to exec
 ## Example
 
 ```typescript
-let fluentWait = new FluentWait<number>()
+let fluentWait = await new FluentWait()
     .withFunctionToExecute(async () => {
         // This could be any asynchronous operation
         let result = await fetchSomeData();
@@ -53,7 +53,7 @@ let fluentWait = new FluentWait<number>()
 
 In this example, the fetchSomeData function is called every second until it returns a non-null result or until 5 seconds have passed. If the function still returns a null result after 5 seconds, the 'Timeout!' message is logged to the console. 
 
-Another example will use the standalone method:
+Another example will use the standalone method and the `.then()` handling for promises:
 
 ```typescript
 import { fluentWait, PollingConfiguration } from './index';
