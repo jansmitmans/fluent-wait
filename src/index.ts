@@ -1,8 +1,20 @@
-const defaultDelayTimeInMs: number = 250;
-const defaultPollingTimeoutInMs: number = 10000;
-const defaultPollingStartTimeInMs = 0;
+export let defaultDelay: number = 250;
+export let defaultTimeout: number = 10000;
+export let defaultPollingStartAfter = 0;
 
-export type PollingConfiguration = { customDelayTimeInMs: number; pollingTimeoutInMs: number; pollingStartAfterInMs?: number };
+export function setDefaultValues(delayTimeInMs?: number, pollingTimeoutInMs?: number, pollingStartAfterInMs?: number): void {
+    if (delayTimeInMs !== undefined) {
+        defaultDelay = delayTimeInMs;
+    }
+    if (pollingTimeoutInMs !== undefined) {
+        defaultTimeout = pollingTimeoutInMs;
+    }
+    if (pollingStartAfterInMs !== undefined) {
+        defaultPollingStartAfter = pollingStartAfterInMs;
+    }
+}
+
+export type PollingConfiguration = { delayTime: number; timeout: number; pollingStartAfter?: number };
 
 async function delay(delayTimeMillis: number): Promise<void> {
     return new Promise<void>((resolve) =>
@@ -20,9 +32,9 @@ export async function fluentWait<T>(
     timeoutCallback?: (args?: any | T) => void
 ): Promise<any> {
     let expiredTimeInMs = 0;
-    const delayTimeInMs = pollingConfiguration?.customDelayTimeInMs ?? defaultDelayTimeInMs;
-    const pollingTimeoutInMs = pollingConfiguration?.pollingTimeoutInMs ?? defaultPollingTimeoutInMs;
-    const pollingStartAfterInMs = pollingConfiguration?.pollingStartAfterInMs ?? defaultPollingStartTimeInMs;
+    const delayTimeInMs = pollingConfiguration?.delayTime ?? defaultDelay;
+    const pollingTimeoutInMs = pollingConfiguration?.timeout ?? defaultTimeout;
+    const pollingStartAfterInMs = pollingConfiguration?.pollingStartAfter ?? defaultPollingStartAfter;
 
     let functionResult: any | T;
     while (!functionResult || (!condition(functionResult) && expiredTimeInMs < pollingTimeoutInMs)) {
@@ -48,7 +60,7 @@ export class FluentWait<T> {
     private pollingConfiguration?: PollingConfiguration;
     private timeoutCallback?: (args?: any | T) => void;
 
-    constructor(){
+    constructor() {
         this.functionToExecute = undefined;
         this.condition = undefined;
         this.pollingConfiguration = undefined;
@@ -84,5 +96,4 @@ export class FluentWait<T> {
         }
         return await fluentWait<T>(this.functionToExecute, this.condition, this.pollingConfiguration, this.timeoutCallback);
     }
-
 }
