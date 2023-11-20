@@ -23,5 +23,6 @@
     "@typescript-eslint/parser": "^6.11.0",
     "eslint": "^8.54.0",
     "ts-jest": "^29.1.1"
-  }
+  },
+  "keywords": ["fluent", "wait", "synchronization", "test", "automation", "selenium", "async"]
 }
