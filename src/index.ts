@@ -1,78 +1,59 @@
-export let defaultDelay: number = 250;
-export let defaultTimeout: number = 10000;
-export let defaultPollingStartAfter = 0;
-
-export function setDefaultValues(delayTimeInMs?: number, pollingTimeoutInMs?: number, pollingStartAfterInMs?: number): void {
-    if (delayTimeInMs !== undefined) {
-        defaultDelay = delayTimeInMs;
-    }
-    if (pollingTimeoutInMs !== undefined) {
-        defaultTimeout = pollingTimeoutInMs;
-    }
-    if (pollingStartAfterInMs !== undefined) {
-        defaultPollingStartAfter = pollingStartAfterInMs;
-    }
-}
+import { delay } from './utils/Delayer';
 
 export type PollingConfiguration = { delayTime: number; timeout: number; pollingStartAfter?: number };
+export type Condition<T> = (args?: any | T) => boolean;
+export type ExecutionFunction<T> = (args?: any) => any | Promise<any> | Promise<T>;
+export type TimeoutFunction<T> = (args?: any | T) => void;
 
-async function delay(delayTimeMillis: number): Promise<void> {
-    return new Promise<void>((resolve) =>
-        setTimeout(() => {
-            resolve();
-        }, delayTimeMillis)
-    );
-}
+const defaultPollingConfiguration: PollingConfiguration = {
+    delayTime: 250,
+    timeout: 10000,
+    pollingStartAfter: 0
+};
+
+const defaultTimeoutCallback: TimeoutFunction<void> = () => {
+    throw new Error('The condition was not satisfied within the timeout period.');
+};
 
 /* This functions runs another function until a condition is fulfilled. You can configure the time between delays and the timeout */
 export async function fluentWait<T>(
-    functionToExecute: (args?: any) => any | Promise<any> | Promise<T>,
-    condition: (args?: any | T) => boolean,
-    pollingConfiguration?: PollingConfiguration,
-    timeoutCallback?: (args?: any | T) => void
+    functionToExecute: ExecutionFunction<T>,
+    condition: Condition<T>,
+    pollingConfiguration: PollingConfiguration = defaultPollingConfiguration,
+    timeoutCallback: TimeoutFunction<T> = defaultTimeoutCallback
 ): Promise<any> {
     let expiredTimeInMs = 0;
-    const delayTimeInMs = pollingConfiguration?.delayTime ?? defaultDelay;
-    const pollingTimeoutInMs = pollingConfiguration?.timeout ?? defaultTimeout;
-    const pollingStartAfterInMs = pollingConfiguration?.pollingStartAfter ?? defaultPollingStartAfter;
+    const { delayTime, timeout, pollingStartAfter } = pollingConfiguration;
 
     let functionResult: any | T;
-    while (!functionResult || (!condition(functionResult) && expiredTimeInMs < pollingTimeoutInMs)) {
-        await delay(delayTimeInMs);
-        expiredTimeInMs += delayTimeInMs;
-        if (expiredTimeInMs >= pollingStartAfterInMs) {
+    while (!functionResult || (!condition(functionResult) && expiredTimeInMs < timeout)) {
+        await delay(delayTime);
+        expiredTimeInMs += delayTime;
+        if (!pollingStartAfter || expiredTimeInMs >= pollingStartAfter) {
             functionResult = await functionToExecute();
         }
     }
 
-    if (expiredTimeInMs >= pollingTimeoutInMs) {
-        if (timeoutCallback) {
-            return timeoutCallback(functionResult);
-        }
-        throw new Error('The condition was not satisfied within the timeout period.');
+    if (expiredTimeInMs >= timeout) {
+        return timeoutCallback(functionResult);
     }
     return functionResult;
 }
 
 export class FluentWait<T> {
-    private functionToExecute?: (args?: any) => any | Promise<any> | Promise<T>;
-    private condition?: (args?: any | T) => boolean;
-    private pollingConfiguration?: PollingConfiguration;
-    private timeoutCallback?: (args?: any | T) => void;
+    private functionToExecute: ExecutionFunction<T>;
+    private condition: Condition<T>;
+    private pollingConfiguration: PollingConfiguration;
+    private timeoutCallback: TimeoutFunction<T>;
 
-    constructor() {
-        this.functionToExecute = undefined;
-        this.condition = undefined;
-        this.pollingConfiguration = undefined;
-        this.timeoutCallback = undefined;
-    }
+    constructor() {}
 
-    public withFunctionToExecute(functionToExecute: (args?: any) => any | Promise<any> | Promise<T>): FluentWait<T> {
+    public withFunctionToExecute(functionToExecute: ExecutionFunction<T>): FluentWait<T> {
         this.functionToExecute = functionToExecute;
         return this;
     }
 
-    public toBeFulfilledCondition(condition: (args?: any | T) => boolean): FluentWait<T> {
+    public toBeFulfilledCondition(condition: Condition<T>): FluentWait<T> {
         this.condition = condition;
         return this;
     }
@@ -82,7 +63,7 @@ export class FluentWait<T> {
         return this;
     }
 
-    public useTimeoutCallBack(timeoutCallback: (args?: any | T) => void): FluentWait<T> {
+    public useTimeoutCallBack(timeoutCallback: TimeoutFunction<T>): FluentWait<T> {
         this.timeoutCallback = timeoutCallback;
         return this;
     }

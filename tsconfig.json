@@ -1,8 +1,8 @@
 {  "compilerOptions": {
         "target": "ESNext",
         // "allowSyntheticDefaultImports": true,
-        "module": "ESNext", // or ES2015, ES2020
         "moduleResolution": "node",
+        "module": "commonjs",
         "lib": ["ESNext"],
         "declaration": true,
         "declarationMap": true,

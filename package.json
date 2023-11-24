@@ -3,30 +3,39 @@
   "version": "1.0.0",
   "description": "This library features a fluent wait functionality which you can use to execute an action periodically until a certain condition is fulfilled. Useful for handling synchronization issues that may arise, e.g. in test automation. ",
   "repository": {
-  "type": "git",
-  "url": "https://github.com/jansmitmans/fluent-wait.git"
+    "type": "git",
+    "url": "https://github.com/jansmitmans/fluent-wait.git"
   },
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist/ && prettier --write src/ && npm run lint:fix && tsc",
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --ext .ts . --fix",
-    "test": "jest --coverage --verbose"
+    "test": "jest --coverage --verbose",
+    "samples": "node --require ts-node/register samples/FluentWaitFunction.ts && node --require ts-node/register samples/FluentWaitBuilder.ts"
   },
   "author": "Jan Smitmans",
   "license": "ISC",
-  "dependencies": {
-    "prettier": "^3.1.0",
-    "tsconfig": "^7.0.0",
-    "typescript": "^5.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.8",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "eslint": "^8.54.0",
-    "ts-jest": "^29.1.1"
+    "eslint-plugin-unicorn": "^49.0.0",
+    "ts-jest": "^29.1.1",
+    "prettier": "^3.1.0",
+    "typescript": "^5.2.2",
+    "ts-node": "^10.9.1"
   },
-  "keywords": ["fluent", "wait", "synchronization", "test", "automation", "selenium", "async"]
+  "keywords": [
+    "fluent",
+    "wait",
+    "synchronization",
+    "test",
+    "automation",
+    "selenium",
+    "async"
+  ]
 }
